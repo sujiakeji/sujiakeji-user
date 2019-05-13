@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sujiakeji.user.mapper.UserMapper">
+
+    <resultMap id="merResultMap" type="com.sujiakeji.user.domain.User">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_no" property="userNo" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="pass_word" property="passWord" jdbcType="VARCHAR"/>
+        <result column="full_name" property="fullName" jdbcType="VARCHAR"/>
+        <result column="sex" property="sex" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="cred_type" property="credType" jdbcType="VARCHAR"/>
+        <result column="cred_num" property="credNum" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="country" property="country" jdbcType="VARCHAR"/>
+        <result column="profession" property="profession" jdbcType="VARCHAR"/>
+        <result column="id_card_front" property="idCardFront" jdbcType="VARCHAR"/>
+        <result column="id_card_back" property="idCardBack" jdbcType="VARCHAR"/>
+        <result column="id_card_hand" property="idCardHand" jdbcType="VARCHAR"/>
+        <result column="other_data" property="otherData" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" javaType="org.joda.time.DateTime"
+                typeHandler="com.sujiakeji.user.mybatis.handler.DateTimeTypeHandler"/>
+        <result column="create_by" property="createBy" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" javaType="org.joda.time.DateTime"
+                typeHandler="com.sujiakeji.user.mybatis.handler.DateTimeTypeHandler"/>
+        <result column="update_by" property="updateBy" jdbcType="BIGINT"/>
+        <result column="is_admin" property="isAdmin" jdbcType="CHAR"/>
+    </resultMap>
+
+    <sql id="basicColumns">
+        id,
+        user_no,
+        user_name,
+        full_name,
+        sex,
+        address,
+        cred_type,
+        cred_num,
+        phone,
+        email,
+        country,
+        profession
+    </sql>
+
+    <sql id="fullColumns">
+        id,
+        user_no,
+        user_name,
+        pass_word,
+        full_name,
+        sex,
+        address,
+        cred_type,
+        cred_num,
+        phone,
+        email,
+        country,
+        profession,
+        id_card_front,
+        id_card_back,
+        id_card_hand,
+        other_data,
+        status,
+        create_time,
+        create_by,
+        update_time,
+        update_by,
+        is_admin
+    </sql>
+
+    <select id="selectOne" resultMap="merResultMap" parameterType="java.util.Map">
+        select
+        <choose>
+            <when test="queryType == 'basic'">
+                <include refid="basicColumns"/>
+            </when>
+            <when test="queryType == 'full'">
+                <include refid="fullColumns"/>
+            </when>
+            <otherwise>
+                <include refid="basicColumns"/>
+            </otherwise>
+        </choose>
+        from t_user
+        <if test="filterList != null">
+            <where>
+                <foreach collection="filterList" item="filter" separator=" and ">
+                    ${filter.condition} ${filter.value}
+                </foreach>
+            </where>
+        </if>
+        limit 1
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(1)
+        from t_user
+        <if test="filterList != null">
+            <where>
+                <foreach collection="filterList" item="filter" separator=" and ">
+                    ${filter.condition} ${filter.value}
+                </foreach>
+            </where>
+        </if>
+    </select>
+
+    <select id="selectList" resultMap="merResultMap" parameterType="java.util.Map">
+        select
+        <choose>
+            <when test="queryType == 'basic'">
+                <include refid="basicColumns"/>
+            </when>
+            <when test="queryType == 'full'">
+                <include refid="fullColumns"/>
+            </when>
+            <otherwise>
+                <include refid="basicColumns"/>
+            </otherwise>
+        </choose>
+        from t_user
+        <if test="filterList != null">
+            <where>
+                <foreach collection="filterList" item="filter" separator=" and ">
+                    ${filter.condition} ${filter.value}
+                </foreach>
+            </where>
+        </if>
+        <if test="order != null">
+            order by ${order}
+        </if>
+        <if test="offset != null and size !=null">
+            limit #{offset}, #{size}
+        </if>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="com.sujiakeji.user.domain.User">
+        insert into t_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userNo != null">
+                user_no,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="passWord != null">
+                pass_word,
+            </if>
+            <if test="fullName != null">
+                full_name,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="credType != null">
+                cred_type,
+            </if>
+            <if test="credNum != null">
+                cred_num,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="country != null">
+                country,
+            </if>
+            <if test="profession != null">
+                profession,
+            </if>
+            <if test="idCardFront != null">
+                id_card_front,
+            </if>
+            <if test="idCardBack != null">
+                id_card_back,
+            </if>
+            <if test="idCardHand != null">
+                id_card_hand,
+            </if>
+            <if test="otherData != null">
+                other_data,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="isAdmin != null">
+                is_admin,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userNo != null">
+                #{userNo,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="passWord != null">
+                #{passWord,jdbcType=VARCHAR},
+            </if>
+            <if test="fullName != null">
+                #{fullName,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                #{sex,jdbcType=BIGINT},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="credType != null">
+                #{credType,jdbcType=VARCHAR},
+            </if>
+            <if test="credNum != null">
+                #{credNum,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="country != null">
+                #{country,jdbcType=VARCHAR},
+            </if>
+            <if test="profession != null">
+                #{profession,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardFront != null">
+                #{idCardFront,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardBack != null">
+                #{idCardBack,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardHand != null">
+                #{idCardHand,jdbcType=VARCHAR},
+            </if>
+            <if test="otherData != null">
+                #{otherData,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,typeHandler=com.sujiakeji.user.mybatis.handler.DateTimeTypeHandler},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="isAdmin != null">
+                #{isAdmin,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.sujiakeji.user.domain.User">
+        update t_user
+        <set>
+            <if test="userNo != null">
+                user_no = #{userNo,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="passWord != null">
+                pass_word = #{passWord,jdbcType=VARCHAR},
+            </if>
+            <if test="fullName != null">
+                full_name = #{fullName,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="credType != null">
+                cred_type = #{credType,jdbcType=VARCHAR},
+            </if>
+            <if test="credNum != null">
+                cred_num = #{credNum,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="country != null">
+                country = #{country,jdbcType=VARCHAR},
+            </if>
+            <if test="profession != null">
+                profession = #{profession,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardFront != null">
+                id_card_front = #{idCardFront,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardBack != null">
+                id_card_back = #{idCardBack,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardHand != null">
+                id_card_hand = #{idCardHand,jdbcType=VARCHAR},
+            </if>
+            <if test="otherData != null">
+                other_data = #{otherData,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate,typeHandler=com.sujiakeji.user.mybatis.handler.DateTimeTypeHandler},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=BIGINT},
+            </if>
+            <if test="isAdmin != null">
+                is_admin = #{isAdmin,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="delete" parameterType="java.util.Map">
+        delete from t_user
+        <if test="filterList != null">
+            <where>
+                <foreach collection="filterList" item="filter" separator=" and ">
+                    ${filter.condition} ${filter.value}
+                </foreach>
+            </where>
+        </if>
+    </delete>
+
+</mapper>
